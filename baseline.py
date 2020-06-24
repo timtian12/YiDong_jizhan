@@ -369,3 +369,11 @@ sub1 = sub1[['基站名称']].merge(val1, on='基站名称', how='left')
 sub2 = sub2[['基站名称']].merge(val2, on='基站名称', how='left')
 sub1.to_csv('/root/models/results/Sample23日.csv', index=False)
 sub2.to_csv('/root/models/results/Sample31日.csv', index=False)
+
+import sklearn.preprocessing as pre_processing
+import numpy as np
+
+label = pre_processing.LabelEncoder()
+label.fit()
+labels = label.fit_transform(['中国', '美国', '法国', '德国'])
+print(labels)
