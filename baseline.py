@@ -334,7 +334,7 @@ def train_lgb_model(train_, valid_, valid_2, id_name, label_name, categorical_fe
     valid_['未来24小时发生退服类告警的概率'] = valid_[label_name]
     valid_2['未来24小时发生退服类告警的概率'] = valid_2[label_name]
 
-    return valid_[['基站名称', '未来24小时发生退服类告警的概率']], valid_2[['基站名称', '未来24小时发生退服类告警的概率']]
+    return th, valid_[['基站名称', '未来24小时发生退服类告警的概率']], valid_2[['基站名称', '未来24小时发生退服类告警的概率']],valid_2[['基站名称', '未来24小时发生退服类告警的概率']], valid_2[['基站名称', '未来24小时发生退服类告警的概率']]
 
 online_train_data = get_train_data(all_train_data, start_i=0, times=30)
 all_data = online_train_data.append(all_test_data)
@@ -353,7 +353,7 @@ val2.to_csv('./Sample31_1日.csv', index=False)
 
 cols = [col for col in train_data.columns if col not in ['ID','label','end_time']]
 
-val1, val2 = train_lgb_model(train_data[cols+['ID','label']], test1_data[cols+['ID']], test2_data[cols+['ID']], 'ID', 'label')
+th, val1, val2 = train_lgb_model(train_data[cols+['ID','label']], test1_data[cols+['ID']], test2_data[cols+['ID']], 'ID', 'label')
 val1.to_csv('./Sample23_1日.csv', index=False)
 val2.to_csv('./Sample31_1日.csv', index=False)
 
@@ -362,8 +362,8 @@ val2.to_csv('./Sample31_1日.csv', index=False)
 sub1 = pd.read_csv('/mnt/5/提交文件样例/Sample23日.csv', encoding='gbk')
 sub2 = pd.read_csv('/mnt/5/提交文件样例/Sample31日.csv', encoding='gbk')
 
-val1['未来24小时发生退服类告警的概率'] = val1['未来24小时发生退服类告警的概率'].apply(lambda x: 1 if x>0.16 else 0)
-val2['未来24小时发生退服类告警的概率'] = val2['未来24小时发生退服类告警的概率'].apply(lambda x: 1 if x>0.16 else 0)
+val1['未来24小时发生退服类告警的概率'] = val1['未来24小时发生退服类告警的概率'].apply(lambda x: 1 if x>th else 0)
+val2['未来24小时发生退服类告警的概率'] = val2['未来24小时发生退服类告警的概率'].apply(lambda x: 1 if x>th else 0)
 
 sub1 = sub1[['基站名称']].merge(val1, on='基站名称', how='left')
 sub2 = sub2[['基站名称']].merge(val2, on='基站名称', how='left')
